@@ -3,6 +3,7 @@ import { stationService } from './station.service.js'
 
 export async function getStations(req, res) {
 	try {
+		const search = req.params.search
 		// const filterBy = {
 		// 	txt: req.query.txt || '',
 		// 	minSpeed: +req.query.minSpeed || 0,
@@ -10,7 +11,9 @@ export async function getStations(req, res) {
         //     sortDir: req.query.sortDir || 1,
 		// 	pageIdx: req.query.pageIdx,
 		// }
-		const stations = await stationService.query()
+		console.log(search);
+		
+		const stations = await stationService.query(search)
 		res.json(stations)
 	} catch (err) {
 		logger.error('Failed to get stations', err)

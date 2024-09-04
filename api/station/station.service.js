@@ -17,20 +17,18 @@ export const stationService = {
 	removeStationMsg,
 }
 
-async function query(filterBy = { txt: '' }) {
+async function query(search = '') {
 	try {
-        const criteria = _buildCriteria(filterBy)
-        const sort = _buildSort(filterBy)
+        const criteria = _buildCriteria(search)
+        // const sort = _buildSort(filterBy)
 
 		const collection = await dbService.getCollection('stations')
+		var stationCursor = await collection.find(criteria)
 		// var stationCursor = await collection.find(criteria, { sort })
 
-		// if (filterBy.pageIdx !== undefined) {
-		// 	stationCursor.skip(filterBy.pageIdx * PAGE_SIZE).limit(PAGE_SIZE)
-		// }
 
-		// const stations = stationCursor.toArray()
-		return collection
+		const stations = stationCursor.toArray()
+		return stations
 	} catch (err) {
 		logger.error('cannot find stations', err)
 		throw err
@@ -130,16 +128,15 @@ async function removeStationMsg(stationId, msgId) {
 	}
 }
 
-function _buildCriteria(filterBy) {
+function _buildCriteria(search) {
     const criteria = {
-        vendor: { $regex: filterBy.txt, $options: 'i' },
-        speed: { $gte: filterBy.minSpeed },
+        name: { $regex: search, $options: 'i' },
     }
 
     return criteria
 }
 
 function _buildSort(filterBy) {
-    if(!filterBy.sortField) return {}
-    return { [filterBy.sortField]: filterBy.sortDir }
+    // if(!filterBy.sortField) return {}
+    // return { [filterBy.sortField]: filterBy.sortDir }
 }

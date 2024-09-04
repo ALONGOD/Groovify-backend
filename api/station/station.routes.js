@@ -11,7 +11,7 @@ const router = express.Router()
 // router.use(requireAuth)
 
 router.get('/', log, getStations)
-router.get('/:id', log, getStationById)
+router.get('/:search', log, getStations)
 router.post('/', log, requireAuth, addStation)
 router.put('/:id', requireAuth, updateStation)
 router.delete('/:id', requireAuth, removeStation)
