@@ -76,16 +76,18 @@ async function add(station) {
     description: station.description,
     imgUrl: station.imgUrl,
     tags: station.tags,
-    createdBy: 'logged in user',
-    createdAt: Date.now(),
+    createdBy: station.createdBy,
+    // createdAt: Date.now(),
     likedByUsers: station.likedByUsers,
     songs: station.songs,
   }
   try {
     const collection = await dbService.getCollection('stations')
-    await collection.insertOne(stationToSave)
+    const result = await collection.insertOne(stationToSave)
 
-    return station
+    stationToSave._id = result.insertedId
+
+    return stationToSave
   } catch (err) {
     logger.error('cannot insert station', err)
     throw err
@@ -94,13 +96,13 @@ async function add(station) {
 
 async function update(station) {
   const stationToSave = {
-    name: station.name,
-    description: station.description,
-    imgUrl: station.imgUrl,
-    tags: station.tags,
-    createdBy: station.createdBy,
-    likedByUsers: station.likedByUsers,
-    songs: station.songs,
+    name: station?.name,
+    description: station?.description,
+    imgUrl: station?.imgUrl,
+    tags: station?.tags,
+    createdBy: station?.createdBy,
+    likedByUsers: station?.likedByUsers,
+    songs: station?.songs,
   }
 
   try {

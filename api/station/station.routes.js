@@ -3,7 +3,7 @@ import express from 'express'
 import { requireAuth } from '../../middlewares/requireAuth.middleware.js'
 import { log } from '../../middlewares/logger.middleware.js'
 
-import { getStations, getStationById, addStation, updateStation, removeStation, addStationMsg, removeStationMsg, onAddSongToStation } from './station.controller.js'
+import { getStations, getStationById, addStation, updateStation, removeStation, addStationMsg, removeStationMsg } from './station.controller.js'
 
 const router = express.Router()
 
