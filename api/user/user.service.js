@@ -53,6 +53,25 @@ async function getById(userId) {
         throw err
     }
 }
+async function AddStationToLiked(userId, station) {
+    const { name, createdBy, imgUrl, _id } = station
+    const stationToSave = {
+        id: _id,
+        name,
+        creator: {
+            id: createdBy.id,
+            username: createdBy.username,
+        },
+        imgUrl,
+    }
+    const criteria = { _id: ObjectId.createFromHexString(userId) }
+
+    const collection = await dbService.getCollection('users')
+    const results = await collection.updateOne(criteria, { $push: { likedStations: stationToSave } })
+    console.log('results:', results)
+    return stationToSave
+}
+
 
 async function getByUsername(username) {
 	try {
