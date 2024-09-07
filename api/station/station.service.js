@@ -4,6 +4,7 @@ import { logger } from '../../services/logger.service.js'
 import { makeId } from '../../services/util.service.js'
 import { dbService } from '../../services/db.service.js'
 import { asyncLocalStorage } from '../../services/als.service.js'
+import { userService } from '../user/user.service.js'
 
 const PAGE_SIZE = 3
 
@@ -61,7 +62,6 @@ async function remove(stationId) {
 
     const collection = await dbService.getCollection('stations')
     const res = await collection.deleteOne(criteria)
-
     // if (res.deletedCount === 0) throw 'Not your station'
     return stationId
   } catch (err) {
@@ -86,7 +86,7 @@ async function add(station) {
     const result = await collection.insertOne(stationToSave)
 
     stationToSave._id = result.insertedId
-
+    
     return stationToSave
   } catch (err) {
     logger.error('cannot insert station', err)
@@ -95,6 +95,7 @@ async function add(station) {
 }
 
 async function update(station) {
+  console.log('station:', station)
   const stationToSave = {
     name: station?.name,
     description: station?.description,
@@ -105,11 +106,14 @@ async function update(station) {
     songs: station?.songs,
   }
 
+  console.log('stationToSave:', stationToSave);
+  
+
   try {
     const criteria = { _id: ObjectId.createFromHexString(station._id) }
 
     const collection = await dbService.getCollection('stations')
-    await collection.updateOne(criteria, { $set: stationToSave })
+    // await collection.updateOne(criteria, { $set: stationToSave })
 
     return station
   } catch (err) {
