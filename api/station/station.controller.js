@@ -65,7 +65,8 @@ export async function updateStation(req, res) {
 
 export async function removeStation(req, res) {
 	try {
-		const stationId = req.params.id
+		const stationId = req.params.stationId
+		console.log('stationId:', stationId)
 		const removedId = await stationService.remove(stationId)
 
 		res.send(removedId)

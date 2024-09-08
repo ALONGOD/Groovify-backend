@@ -83,8 +83,8 @@ async function add(station) {
     songs: station.songs,
   }
     const collection = await dbService.getCollection('stations')
-    await collection.insertOne(stationToSave)
-
+    const result = await collection.insertOne(stationToSave)
+    station._id = result.insertedId
     return station
   } catch (err) {
     logger.error('cannot insert station', err)
