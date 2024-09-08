@@ -33,7 +33,7 @@ export async function getStationById(req, res) {
 }
 
 export async function addStation(req, res) {
-	const { loggedinUser, body: station } = req
+	const { loggedinUser, body: station } = req	
 
 	try {
 		// station.owner = loggedinUser
@@ -65,7 +65,7 @@ export async function updateStation(req, res) {
 
 export async function removeStation(req, res) {
 	try {
-		const stationId = req.params.stationId
+		const stationId = req.params.id
 		const removedId = await stationService.remove(stationId)
 
 		res.send(removedId)
