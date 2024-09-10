@@ -77,7 +77,7 @@ async function add(station) {
     description: station.description,
     imgUrl: station.imgUrl,
     tags: station.tags,
-    createdBy: 'logged in user',
+    createdBy: station.createdBy,
     createdAt: Date.now(),
     likedByUsers: station.likedByUsers,
     songs: station.songs,
