@@ -11,16 +11,16 @@ export const userService = {
     remove, // Delete (remove user)
     query, // List (of users)
     getByUsername, // Used for Login
-    AddStationToLiked,
-    removeStationFromLiked,
-    updateLikedStation
+    // AddStationToLiked,
+    // removeStationFromLiked,
+    // updateLikedStation
 }
 
 async function query(filterBy = {}) {
-    const criteria = _buildCriteria(filterBy)
+    // const criteria = _buildCriteria(filterBy)
     try {
-        const collection = await dbService.getCollection('user')
-        var users = await collection.find(criteria).toArray()
+        const collection = await dbService.getCollection('users')
+        var users = await collection.find().toArray()
         users = users.map(user => {
             delete user.password
             user.createdAt = user._id.getTimestamp()
@@ -58,67 +58,67 @@ async function getById(userId) {
     }
 }
 
-async function AddStationToLiked(userId, station) {
-    const { name, createdBy, imgUrl, _id } = station
-    const stationToSave = {
-        id: _id,
-        name,
-        creator: {
-            id: createdBy.id,
-            username: createdBy.username,
-        },
-        imgUrl,
-    }
-    const criteria = { _id: ObjectId.createFromHexString(userId) }
+// async function AddStationToLiked(userId, station) {
+//     const { name, createdBy, imgUrl, _id } = station
+//     const stationToSave = {
+//         id: _id,
+//         name,
+//         creator: {
+//             id: createdBy.id,
+//             username: createdBy.username,
+//         },
+//         imgUrl,
+//     }
+//     const criteria = { _id: ObjectId.createFromHexString(userId) }
 
-    const collection = await dbService.getCollection('users')
-    const results = await collection.updateOne(criteria, { $push: { likedStations: stationToSave } })
-    console.log('results:', results)
-    return stationToSave
-}
+//     const collection = await dbService.getCollection('users')
+//     const results = await collection.updateOne(criteria, { $push: { likedStations: stationToSave } })
+//     console.log('results:', results)
+//     return stationToSave
+// }
 
-async function updateLikedStation(userId, station) {
-    const { name, createdBy, imgUrl, _id } = station
-    const stationToSave = {
-        id: _id,
-        name,
-        creator: {
-            id: createdBy.id,
-            username: createdBy.username,
-        },
-        imgUrl,
-    }
+// async function updateLikedStation(userId, station) {
+//     const { name, createdBy, imgUrl, _id } = station
+//     const stationToSave = {
+//         id: _id,
+//         name,
+//         creator: {
+//             id: createdBy.id,
+//             username: createdBy.username,
+//         },
+//         imgUrl,
+//     }
 
-    const criteria = { _id: ObjectId.createFromHexString(userId), 'likedStations.id': ObjectId.createFromHexString(_id) }
+//     const criteria = { _id: ObjectId.createFromHexString(userId), 'likedStations.id': ObjectId.createFromHexString(_id) }
 
-    const collection = await dbService.getCollection('users')
+//     const collection = await dbService.getCollection('users')
     
-    const results = await collection.updateOne(
-        criteria,
-        { $set: { 'likedStations.$': stationToSave } }
-    )
-    console.log('results:', results)
-    return stationToSave
-}
+//     const results = await collection.updateOne(
+//         criteria,
+//         { $set: { 'likedStations.$': stationToSave } }
+//     )
+//     console.log('results:', results)
+//     return stationToSave
+// }
 
-async function removeStationFromLiked(userId, stationId) {
-    try {
-        const criteria = { _id: ObjectId.createFromHexString(userId) }
-        console.log('criteria:', criteria)
+// async function removeStationFromLiked(userId, stationId) {
+//     try {
+//         const criteria = { _id: ObjectId.createFromHexString(userId) }
+//         console.log('criteria:', criteria)
 
-        const collection = await dbService.getCollection('users')
-        const results = await collection.updateOne(criteria, { $pull: { likedStations: { id: stationId } } })
-        console.log('results:', results)
-        return stationId
-    } catch (err) {
-        logger.error(`cannot remove station ${stationId}`, err)
-        throw err
-    }
-}
+//         const collection = await dbService.getCollection('users')
+//         const results = await collection.updateOne(criteria, { $pull: { likedStations: { id: stationId } } })
+//         console.log('results:', results)
+//         return stationId
+//     } catch (err) {
+//         logger.error(`cannot remove station ${stationId}`, err)
+//         throw err
+//     }
+// }
 
 async function getByUsername(username) {
     try {
-        const collection = await dbService.getCollection('user')
+        const collection = await dbService.getCollection('users')
         const user = await collection.findOne({ username })
         return user
     } catch (err) {
@@ -131,7 +131,7 @@ async function remove(userId) {
     try {
         const criteria = { _id: ObjectId.createFromHexString(userId) }
 
-        const collection = await dbService.getCollection('user')
+        const collection = await dbService.getCollection('users')
         await collection.deleteOne(criteria)
     } catch (err) {
         logger.error(`cannot remove user ${userId}`, err)
@@ -142,7 +142,7 @@ async function remove(userId) {
 async function update(user) {
     try {
         console.log('user:', user)
-        const { _id, username, img: imgUrl, likedSongsStation, likedStations} = user
+        const { _id, username, imgUrl, likedSongsStation, likedStations} = user
         const criteria = { _id: ObjectId.createFromHexString(_id) }
         // peek only updatable properties
         const userToSave = {
@@ -172,17 +172,41 @@ async function add(user) {
             username: user.username,
             password: user.password,
             fullname: user.fullname,
-            imgUrl: user.imgUrl,
-            isAdmin: user.isAdmin,
-            score: 100,
+            imgUrl: 'https://res.cloudinary.com/dpoa9lual/image/upload/v1724570942/Spotify_playlist_photo_yjeurq.png',
+            isAdmin: false,
+            likedSongsStation: {
+                id: 'likedSongsStation',
+                name: 'Liked Songs',
+                imgUrl: "https://misc.scdn.co/liked-songs/liked-songs-300.png",
+                songs: [],
+                createdBy: {
+                    id: 'likedSongsStation',
+                    fullname: user.fullname,
+                    imgUrl: 'https://res.cloudinary.com/dpoa9lual/image/upload/v1724570942/Spotify_playlist_photo_yjeurq.png',
+                },
+                imgUrl: 'https://res.cloudinary.com/dpoa9lual/image/upload/v1724570942/Spotify_playlist_photo_yjeurq.png',
+            },
+            likedStations: [],
         }
-        const collection = await dbService.getCollection('user')
+        // const userToAdd = {
+        //     username: user.username,
+        //     password: user.password,
+        //     fullname: user.fullname,
+        //     imgUrl: user.imgUrl,
+        //     isAdmin: user.isAdmin,
+        //     score: 100,
+        // }
+        const collection = await dbService.getCollection('users')
         await collection.insertOne(userToAdd)
         return userToAdd
     } catch (err) {
         logger.error('cannot add user', err)
         throw err
     }
+}
+
+function emptyUser() {
+    
 }
 
 function _buildCriteria(filterBy) {
