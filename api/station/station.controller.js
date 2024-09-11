@@ -1,6 +1,14 @@
 import { logger } from '../../services/logger.service.js'
 import { stationService } from './station.service.js'
 
+export async function getStationByUser(req, res) {
+	const userId = req.params.userId
+
+	const stations = await stationService.getStationsByUser(userId)
+	console.log('stations:', stations)
+	res.json(stations)
+}
+
 export async function getStations(req, res) {
   try {
     const search = req.params.search
@@ -34,13 +42,12 @@ export async function getStationById(req, res) {
 
 export async function addStation(req, res) {
   const { loggedinUser, body: station } = req
-  console.log('loggedinUser:', loggedinUser)
 
   try {
     station.createdBy = {
       id: loggedinUser._id,
       fullname: loggedinUser.fullname,
-	  imgUrl: loggedinUser.imgUrl
+      imgUrl: loggedinUser.imgUrl,
     }
     const addedStation = await stationService.add(station)
     res.json(addedStation)
@@ -53,11 +60,8 @@ export async function addStation(req, res) {
 export async function updateStation(req, res) {
   try {
     const { loggedinUser, body: station } = req
-    console.log('loggedinUser:', loggedinUser)
 
     const { _id: userId, isAdmin } = loggedinUser
-    console.log('userId:', userId)
-    console.log('station.createdBy._id:', station.createdBy._id)
 
     if (!isAdmin && station.createdBy.id !== userId) {
       res.status(403).send('Not your station...')
@@ -74,6 +78,11 @@ export async function updateStation(req, res) {
 
 export async function removeStation(req, res) {
   try {
+    const { loggedinUser } = req
+    // if (!isAdmin && station.createdBy.id !== userId) {
+    //   res.status(403).send('Not your station...')
+    //   return
+    // }
     const stationId = req.params.stationId
     console.log('stationId:', stationId)
     const removedId = await stationService.remove(stationId)

@@ -16,11 +16,27 @@ export const stationService = {
   update,
   addStationMsg,
   removeStationMsg,
+  getStationsByUser
 }
 
 async function query(search = '') {
   try {
     const criteria = _buildCriteria(search)
+
+    const collection = await dbService.getCollection('stations')
+    var stationCursor = await collection.find(criteria)
+
+    const stations = stationCursor.toArray()
+    return stations
+  } catch (err) {
+    logger.error('cannot find stations', err)
+    throw err
+  }
+}
+
+async function getStationsByUser(userId) {
+  try {
+    const criteria = { 'createdBy.id': userId }
 
     const collection = await dbService.getCollection('stations')
     var stationCursor = await collection.find(criteria)
