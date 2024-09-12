@@ -141,7 +141,6 @@ async function remove(userId) {
 
 async function update(user) {
     try {
-        console.log('user:', user)
         const { _id, username, imgUrl, likedSongsStation, likedStations} = user
         const criteria = { _id: ObjectId.createFromHexString(_id) }
         // peek only updatable properties
@@ -155,9 +154,7 @@ async function update(user) {
         
         
         const collection = await dbService.getCollection('users')
-        console.log('collection:', collection)
         const result = await collection.updateOne( criteria , { $set: userToSave })
-        console.log('result:', result)
         return userToSave
     } catch (err) {
         logger.error(`cannot update user ${user._id}`, err)

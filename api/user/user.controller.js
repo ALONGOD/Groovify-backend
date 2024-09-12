@@ -38,8 +38,6 @@ export async function deleteUser(req, res) {
 
 export async function updateUser(req, res) {
     try {
-        // console.log(req);
-        
         const user = req.body
         console.log('hi');
 

@@ -39,6 +39,8 @@ app.use('/api/user', userRoutes)
 app.use('/api/review', reviewRoutes)
 app.use('/api/station', stationRoutes)
 
+setupSocketAPI(server)
+
 // setupSocketAPI(server)
 
 // Make every unhandled server-side-route match index.html

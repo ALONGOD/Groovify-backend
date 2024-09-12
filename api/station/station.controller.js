@@ -5,7 +5,6 @@ export async function getStationByUser(req, res) {
 	const userId = req.params.userId
 
 	const stations = await stationService.getStationsByUser(userId)
-	console.log('stations:', stations)
 	res.json(stations)
 }
 
@@ -60,6 +59,7 @@ export async function addStation(req, res) {
 export async function updateStation(req, res) {
   try {
     const { loggedinUser, body: station } = req
+    console.log('station:', station)
 
     const { _id: userId, isAdmin } = loggedinUser
 
