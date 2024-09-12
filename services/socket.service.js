@@ -13,7 +13,16 @@ export function setupSocketAPI(http) {
     logger.info(`New connected socket [id: ${socket.id}]`)
 
     socket.on('watch-station', data => {
-      socket.broadcast.emit('watch-station-receieve', data)
+        console.log('data:', data)
+        socket.join(data)
+        console.log('socket.room:',socket.rooms);
+        
+        // socket.broadcast.emit('watch-station-receieve', data)
+        socket.to(data.room).emit('watch-station-receieve', data.id)
+    })
+
+    socket.on('unwatch-station', () => {
+    
     })
     socket.on('set-user-socket', userId => {
       logger.info(
@@ -21,10 +30,13 @@ export function setupSocketAPI(http) {
       )
       socket.userId = userId
     })
+
     socket.on('unset-user-socket', () => {
       logger.info(`Removing socket.userId for socket [id: ${socket.id}]`)
       delete socket.userId
     })
+
+
     socket.on('disconnect', socket => {
       logger.info(`Socket disconnected [id: ${socket.id}]`)
     })
