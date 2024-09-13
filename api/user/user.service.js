@@ -141,12 +141,13 @@ async function remove(userId) {
 
 async function update(user) {
     try {
-        const { _id, username, imgUrl, likedSongsStation, likedStations} = user
+        const { _id, username, imgUrl, fullname, likedSongsStation, likedStations} = user
         const criteria = { _id: ObjectId.createFromHexString(_id) }
         // peek only updatable properties
         const userToSave = {
             _id: ObjectId.createFromHexString(_id), // needed for the returnd obj
             username,
+            fullname,
             imgUrl,
             likedSongsStation,
             likedStations

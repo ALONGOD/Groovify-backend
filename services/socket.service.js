@@ -9,31 +9,62 @@ export function setupSocketAPI(http) {
       origin: '*',
     },
   })
+
+  const stationUsers = {}
   gIo.on('connection', socket => {
     logger.info(`New connected socket [id: ${socket.id}]`)
 
-    socket.on('watch-station', data => {
-        console.log('data:', data)
-        socket.join(data)
-        console.log('socket.room:',socket.rooms);
+
+    socket.on('join-station', ({ stationId }) => {
+      
+      
+      console.log('join-user:', socket?.user);
+      if (socket.user) {
+        if (!stationUsers[stationId]) stationUsers[stationId] = []
+        socket.join(stationId)
+        if (!stationUsers[stationId].some(user => user?.id === socket?.user?.id)) {
+          stationUsers[stationId].push(socket.user);
+        }
+        // console.log('stationUsers[stationId]:', stationUsers[stationId])
         
-        // socket.broadcast.emit('watch-station-receieve', data)
-        socket.to(data.room).emit('watch-station-receieve', data.id)
+        const currentUsersInStation = stationUsers[stationId].filter(user => user?.id !== socket.user?.id);
+        console.log('stationUsers',stationUsers);
+        
+        gIo.to(stationId).emit('station-current-users', currentUsersInStation)
+      }
     })
 
-    socket.on('unwatch-station', () => {
-    
+
+    socket.on('leave-station', ({ stationId }) => {
+      // socket.leave(stationId)
+      socket.leaveAll()
+      console.log('socket.user-leave',socket.user);
+      
+      console.log('leave:', stationId);
+
+      if (stationUsers[stationId]) {
+        const userIdx = stationUsers[stationId].findIndex(user => user.id === socket.user.id);
+        if (userIdx > -1) stationUsers[stationId].splice(userIdx, 1);
+        const currentUsersInStation = stationUsers[stationId].filter(user => user.id !== socket.user.id);
+        console.log('socket.rooms:', socket.rooms);
+
+        // Notify others in the station that this user left
+        gIo.to(stationId).emit('station-current-users', currentUsersInStation);
+      }
     })
-    socket.on('set-user-socket', userId => {
+    socket.on('set-user-socket', user => {
+      console.log('set-user:', user);
       logger.info(
-        `Setting socket.userId = ${userId} for socket [id: ${socket.id}]`
+        `Setting socket.user = ${user?.id} for socket [id: ${socket.id}]`
       )
-      socket.userId = userId
+      socket.user = user
     })
 
     socket.on('unset-user-socket', () => {
+      console.log('unset');
+      
       logger.info(`Removing socket.userId for socket [id: ${socket.id}]`)
-      delete socket.userId
+      delete socket.user
     })
 
 
