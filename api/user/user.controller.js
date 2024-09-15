@@ -14,10 +14,6 @@ export async function getUser(req, res) {
 
 export async function getUsers(req, res) {
     try {
-        // const filterBy = {
-        //     txt: req.query?.txt || '',
-        //     minBalance: +req.query?.minBalance || 0
-        // }
         const users = await userService.query()
         res.send(users)
     } catch (err) {
@@ -42,7 +38,6 @@ export async function updateUser(req, res) {
         console.log('hi');
 
         const savedUser = await userService.update(user)
-        console.log(savedUser);
         res.send(savedUser)
     } catch (err) {
         logger.error('Failed to update user', err)
