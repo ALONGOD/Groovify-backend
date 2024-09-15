@@ -152,6 +152,7 @@ async function update(user) {
             likedSongsStation,
             likedStations
         }
+        console.log('userToSave:', userToSave)
         
         
         const collection = await dbService.getCollection('users')

@@ -14,9 +14,12 @@ export function setupSocketAPI(http) {
   gIo.on('connection', socket => {
     logger.info(`New connected socket [id: ${socket.id}]`)
 
+    socket.on('updated-station', (station) => {
+      console.log('updated-station:', station);
+      socket.broadcast.to(station?._id).emit('updated-station', station)
+    })
 
     socket.on('join-station', ({ stationId }) => {
-      
       console.log('join-user:', socket?.user);
       if (socket.user) {
         if (!stationUsers[stationId]) stationUsers[stationId] = []
@@ -27,7 +30,7 @@ export function setupSocketAPI(http) {
         // console.log('stationUsers[stationId]:', stationUsers[stationId])
         
         const currentUsersInStation = stationUsers[stationId]
-        console.log('stationUsers',stationUsers);
+        // console.log('stationUsers',stationUsers);
         
         gIo.to(stationId).emit('station-current-users', currentUsersInStation)
       }
@@ -38,14 +41,10 @@ export function setupSocketAPI(http) {
       // socket.leave(stationId)
       socket.leaveAll()
 
-      console.log('socket.user-leave',socket.user);
-      console.log('leave:', stationId);
-      
-
       if (stationUsers[stationId]) {
-        const userIdx = stationUsers[stationId].findIndex(user => user.id === socket.user.id);
+        const userIdx = stationUsers[stationId].findIndex(user => user.id === socket?.user?.id);
         if (userIdx > -1) stationUsers[stationId].splice(userIdx, 1);
-        const currentUsersInStation = stationUsers[stationId].filter(user => user.id !== socket.user.id);
+        const currentUsersInStation = stationUsers[stationId].filter(user => user.id !== socket?.user?.id);
         console.log('socket.rooms:', socket.rooms);
 
         // Notify others in the station that this user left

@@ -59,7 +59,7 @@ export async function addStation(req, res) {
 export async function updateStation(req, res) {
   try {
     const { loggedinUser, body: station } = req
-    console.log('station:', station)
+    // console.log('station:', station)
 
     const { _id: userId, isAdmin } = loggedinUser
 
@@ -84,7 +84,7 @@ export async function removeStation(req, res) {
     //   return
     // }
     const stationId = req.params.stationId
-    console.log('stationId:', stationId)
+    // console.log('stationId:', stationId)
     const removedId = await stationService.remove(stationId)
 
     res.send(removedId)
