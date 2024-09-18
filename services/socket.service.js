@@ -60,8 +60,10 @@ export function setupSocketAPI(http) {
       socket.broadcast.to(station?._id).emit('updated-station', station)
     })
 
+
     socket.on('join-station', ({ stationId }) => {
-      console.log('join-user:', socket?.user)
+      
+      console.log('join-user:', socket?.user);
       if (socket.user) {
         if (!stationUsers[stationId]) stationUsers[stationId] = []
         socket.join(stationId)
@@ -72,7 +74,8 @@ export function setupSocketAPI(http) {
         }
 
         const currentUsersInStation = stationUsers[stationId]
-
+        console.log('stationUsers',stationUsers);
+        
         gIo.to(stationId).emit('station-current-users', currentUsersInStation)
       }
     })
