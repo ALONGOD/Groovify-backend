@@ -59,7 +59,7 @@ export async function addStation(req, res) {
 export async function updateStation(req, res) {
   try {
     const { loggedinUser, body: station } = req
-    // console.log('station:', station)
+    console.log('station:', station)
 
     const { _id: userId, isAdmin } = loggedinUser
 

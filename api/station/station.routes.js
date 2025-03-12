@@ -21,4 +21,5 @@ router.delete('/:stationId', requireAuth, removeStation)
 router.post('/:id/msg', requireAuth, addStationMsg)
 router.delete('/:id/msg/:msgId', requireAuth, removeStationMsg)
 
+
 export const stationRoutes = router
